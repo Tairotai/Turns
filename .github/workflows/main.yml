@@ -1,22 +1,24 @@
-name: shift-bot
+name: Turnos_E1_E5
 on:
   schedule:
     - cron: '0 5,11,17,23 * * *'
   workflow_dispatch:
+
 jobs:
-  send:
+  send_turn:
     runs-on: ubuntu-latest
     steps:
-      - name: Set User
+      - name: Execute
         run: |
-          H=$(date -u +%H)
-          if [ "$H" -ge 05 ] && [ "$H" -lt 11 ]; then echo "U=Bap" >> $GITHUB_ENV;
-          elif [ "$H" -ge 11 ] && [ "$H" -lt 17 ]; then echo "U=Darky" >> $GITHUB_ENV;
-          elif [ "$H" -ge 17 ] && [ "$H" -lt 23 ]; then echo "U=Tairo" >> $GITHUB_ENV;
-          else echo "U=Hrant" >> $GITHUB_ENV; fi
-
-      - name: Send Message
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d "{\"content\": \"Current Turn: ${{ env.U }}\"}" \
-          https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
+          export TZ="America/Bogota"
+          HOUR=$(date +%H)
+          if [ "$HOUR" -ge 0 ] && [ "$HOUR" -lt 6 ]; then
+            NAME="Bap"
+          elif [ "$HOUR" -ge 6 ] && [ "$HOUR" -lt 12 ]; then
+            NAME="Darky"
+          elif [ "$HOUR" -ge 12 ] && [ "$HOUR" -lt 18 ]; then
+            NAME="Tairo"
+          else
+            NAME="Hrant"
+          fi
+          curl -X POST -H "Content-Type: application/json" -d "{\"content\":\"Current **E1 - E5** Turn: $NAME\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
