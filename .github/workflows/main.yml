@@ -7,14 +7,11 @@ jobs:
   send:
     runs-on: ubuntu-latest
     steps:
-      - shell: bash
-        run: |
+      - run: |
           H=$(date -u +%H)
-          case $H in
-            11|12|13|14|15|16) U="Bap" ;;
-            17|18|19|20|21|22) U="Darky" ;;
-            23|00|01|02|03|04) U="Tairo" ;;
-            05|06|07|08|09|10) U="Hrant" ;;
-            *) U="Tairo" ;;
-          esac
-          curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Current Turn: $U\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
+          if [ $H -ge 05 ] && [ $H -lt 11 ]; then echo "U=Bap" >> $GITHUB_ENV
+          elif [ $H -ge 11 ] && [ $H -lt 17 ]; then echo "U=Darky" >> $GITHUB_ENV
+          elif [ $H -ge 17 ] && [ $H -lt 23 ]; then echo "U=Tairo" >> $GITHUB_ENV
+          else echo "U=Hrant" >> $GITHUB_ENV
+          fi
+      - run: curl -X POST -H "Content-Type: application/json" -d "{\"content\":\"Current Turn ${{env.U}}\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
