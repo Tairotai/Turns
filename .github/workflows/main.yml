@@ -1,24 +1,32 @@
 name: Turnos_E1_E5
 on:
   schedule:
+    # Se activa a las 00:00, 06:00, 12:00 y 18:00 hora Colombia
     - cron: '0 5,11,17,23 * * *'
-  workflow_dispatch:
+  workflow_dispatch: # Para que puedas probarlo manualmente
 
 jobs:
   send_turn:
     runs-on: ubuntu-latest
     steps:
-      - name: Execute
+      - name: Calculate and Send
         run: |
+          # Configuramos la hora de Colombia
           export TZ="America/Bogota"
-          HOUR=$(date +%H)
-          if [ "$HOUR" -ge 0 ] && [ "$HOUR" -lt 6 ]; then
+          HORA=$(date +%-H)
+          
+          # Lógica de turnos
+          if [ $HORA -lt 6 ]; then
             NAME="Bap"
-          elif [ "$HOUR" -ge 6 ] && [ "$HOUR" -lt 12 ]; then
+          elif [ $HORA -lt 12 ]; then
             NAME="Darky"
-          elif [ "$HOUR" -ge 12 ] && [ "$HOUR" -lt 18 ]; then
+          elif [ $HORA -lt 18 ]; then
             NAME="Tairo"
           else
             NAME="Hrant"
           fi
-          curl -X POST -H "Content-Type: application/json" -d "{\"content\":\"Current **E1 - E5** Turn: $NAME\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
+          
+          # Enviar mensaje profesional
+          curl -X POST -H "Content-Type: application/json" \
+          -d "{\"content\":\"Current **E1 - E5** Turn: **$NAME**\"}" \
+          https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
