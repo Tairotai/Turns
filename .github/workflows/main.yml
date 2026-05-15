@@ -9,9 +9,8 @@ jobs:
     steps:
       - run: |
           H=$(date -u +%H)
-          U="Unknown"
-          if [ "$H" -ge 11 ] && [ "$H" -lt 17 ]; then U="Bap"; fi
-          if [ "$H" -ge 17 ] && [ "$H" -lt 23 ]; then U="Darky"; fi
-          if [ "$H" -ge 23 ] || [ "$H" -lt 05 ]; then U="Hrant"; fi
-          if [ "$H" -ge 05 ] && [ "$H" -lt 11 ]; then U="Tairo"; fi
+          if [ $H -ge 10 ] && [ $H -lt 16 ]; then U="Bap";
+          elif [ $H -ge 16 ] && [ $H -lt 22 ]; then U="Darky";
+          elif [ $H -ge 22 ] || [ $H -lt 04 ]; then U="Hrant";
+          else U="Tairo"; fi
           curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Current Turn: $U\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
