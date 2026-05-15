@@ -8,9 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          H=$(date -u +%H)
-          if [ $H -ge 11 ] && [ $H -lt 17 ]; then U="Bap";
-          elif [ $H -ge 17 ] && [ $H -lt 23 ]; then U="Darky";
-          elif [ $H -ge 23 ] || [ $H -lt 05 ]; then U="Hrant";
-          else U="Tairo"; fi
+          START=1747242000
+          NOW=$(date +%s)
+          DIFF=$(( (NOW - START) / 21600 ))
+          MOD=$(( DIFF % 4 ))
+          
+          if [ $MOD -eq 0 ]; then U="Bap"; fi
+          if [ $MOD -eq 1 ]; then U="Darky"; fi
+          if [ $MOD -eq 2 ]; then U="Hrant"; fi
+          if [ $MOD -eq 3 ]; then U="Tairo"; fi
+          
           curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Current Turn: $U\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
