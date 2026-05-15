@@ -1,0 +1,16 @@
+name: shift-bot
+on:
+  schedule:
+    - cron: '0 5,11,17,23 * * *'
+  workflow_dispatch:
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          H=$(date -u +%H)
+          if [ "$H" == "11" ]; then U="Bap"; fi
+          if [ "$H" == "17" ]; then U="Darky"; fi
+          if [ "$H" == "23" ]; then U="Tairo"; fi
+          if [ "$H" == "05" ]; then U="Hrant"; fi
+          curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Current Turn: $U\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
