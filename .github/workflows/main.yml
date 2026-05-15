@@ -1,29 +1,42 @@
-name: Turnos_E1_E5
+name: Turnos_E1_E5_Definitivo
 on:
   schedule:
-    - cron: '0 5,11,17,23 * * *'
+    - cron: '0 5,11,17,23 * * *' # 00:00, 06:00, 12:00, 18:00 Hora Colombia
   workflow_dispatch:
 
 jobs:
-  send_turn:
+  envio_pro:
     runs-on: ubuntu-latest
     steps:
-      - name: Definir Nombre
+      - name: Ejecutar Script de Turnos
         run: |
-          export TZ="America/Bogota"
-          HORA=$(date +%-H)
-          if [ $HORA -lt 6 ]; then
-            echo "TURNO_NAME=Bap" >> $GITHUB_ENV
-          elif [ $HORA -lt 12 ]; then
-            echo "TURNO_NAME=Darky" >> $GITHUB_ENV
-          elif [ $HORA -lt 18 ]; then
-            echo "TURNO_NAME=Tairo" >> $GITHUB_ENV
-          else
-            echo "TURNO_NAME=Hrant" >> $GITHUB_ENV
-          fi
+          python3 -c "
+          import requests
+          from datetime import datetime
+          import pytz
 
-      - name: Enviar Webhook
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d "{\"content\":\"Current **E1 - E5** Turn: **${{ env.TURNO_NAME }}**\"}" \
-          https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
+          # Configurar Zona Horaria Colombia
+          tz = pytz.timezone('America/Bogota')
+          hora = datetime.now(tz).hour
+
+          # Lógica de Turnos
+          if 0 <= hora < 6:
+              nombre = 'Bap'
+          elif 6 <= hora < 12:
+              nombre = 'Darky'
+          elif 12 <= hora < 18:
+              nombre = 'Tairo'
+          else:
+              nombre = 'Hrant'
+
+          # Datos del Webhook
+          url = 'https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf'
+          payload = {'content': f'Current **E1 - E5** Turn: **{nombre}**'}
+
+          # Enviar
+          response = requests.post(url, json=payload)
+          if response.status_code == 204:
+              print(f'Enviado con éxito: {nombre}')
+          else:
+              print(f'Error: {response.status_code}')
+          "
