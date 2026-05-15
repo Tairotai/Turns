@@ -7,15 +7,14 @@ jobs:
   send:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          START=1747242000
-          NOW=$(date +%s)
-          DIFF=$(( (NOW - START) / 21600 ))
-          MOD=$(( DIFF % 4 ))
-          
-          if [ $MOD -eq 0 ]; then U="Bap"; fi
-          if [ $MOD -eq 1 ]; then U="Darky"; fi
-          if [ $MOD -eq 2 ]; then U="Hrant"; fi
-          if [ $MOD -eq 3 ]; then U="Tairo"; fi
-          
+      - shell: bash
+        run: |
+          H=$(date -u +%H)
+          case $H in
+            11|12|13|14|15|16) U="Bap" ;;
+            17|18|19|20|21|22) U="Darky" ;;
+            23|00|01|02|03|04) U="Tairo" ;;
+            05|06|07|08|09|10) U="Hrant" ;;
+            *) U="Tairo" ;;
+          esac
           curl -X POST -H "Content-Type: application/json" -d "{\"content\": \"Current Turn: $U\"}" https://discord.com/api/webhooks/1504734079222812744/2OwArDVSkZLf1_oJRMMs0ILjPuAm7ej3m7_Ryr2P9OLl9OdzNeZ2-WFhCXzQpqRFSaMf
